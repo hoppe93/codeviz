@@ -14,7 +14,7 @@ class PlotWindow(QtWidgets.QFrame):
     def __init__(self, parent=None):
         super(PlotWindow, self).__init__(parent)
 
-        self.figure = Figure(facecolor='black')
+        self.figure = Figure(facecolor='white')
         self.canvas = FigureCanvas(self.figure)
         self.toolbar = NavigationToolbar(self.canvas, self)
         self.image = None
@@ -42,13 +42,20 @@ class PlotWindow(QtWidgets.QFrame):
             f: CodeDistribution function
             coordinates: 1 = ppar / pperp, 2 = p / pitch
         """
-        #gerimap = plt.get_cmap('GeriMap')
-        gerimap = plt.get_cmap('afmhot')
+        gerimap = plt.get_cmap('GeriMap')
+        #gerimap = plt.get_cmap('afmhot')
         fig.clear()
         ax = fig.add_subplot(111)
         #mx = max(max(f))
 
-        cp = ax.contourf(X, Y, f, cmap=gerimap)
+        cp = ax.contourf(X, Y, f, cmap=gerimap, vmin=cutoff, vmax=0)
+        cbar = fig.colorbar(cp, shrink=0.8)
+        #cbar.ax.tick_params(labelcolor='white', color='white')
+        #ax.tick_params(labelcolor='white', color='white')
+
+        ax.set_xlim([0,20])
+        ax.set_ylim([0,20])
+        ax.set_axis_bgcolor('black')
 
         return ax, cp
 

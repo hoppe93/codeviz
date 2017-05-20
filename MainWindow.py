@@ -85,5 +85,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.plotDistWindow.show()
 
         cd = self.codedist
-        self.plotDistWindow.plot(cd.P, cd.XI, cd.f)
+        logf = np.log10(cd.f)
+
+        PARAM1 = None
+        PARAM2 = None
+
+        if self.ui.rbPPitch.isChecked():
+            PARAM1 = cd.THETA
+            PARAM2 = cd.P
+        else:
+            PARAM1 = cd.PPAR
+            PARAM2 = cd.PPERP
+
+        self.plotDistWindow.plot(PARAM1, PARAM2, logf, cutoff=-9)
 

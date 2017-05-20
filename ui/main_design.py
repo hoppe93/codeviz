@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/main.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.8.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -49,7 +49,7 @@ class Ui_MainWindow(object):
         font.setBold(False)
         font.setWeight(50)
         self.rbPPitch.setFont(font)
-        self.rbPPitch.setChecked(True)
+        self.rbPPitch.setChecked(False)
         self.rbPPitch.setObjectName("rbPPitch")
         self.rbPparPperp = QtWidgets.QRadioButton(self.gbCoordinates)
         self.rbPparPperp.setGeometry(QtCore.QRect(250, 30, 106, 26))
@@ -57,6 +57,7 @@ class Ui_MainWindow(object):
         font.setBold(False)
         font.setWeight(50)
         self.rbPparPperp.setFont(font)
+        self.rbPparPperp.setChecked(True)
         self.rbPparPperp.setObjectName("rbPparPperp")
         self.gbSWeighting = QtWidgets.QGroupBox(self.centralwidget)
         self.gbSWeighting.setEnabled(False)
