@@ -137,6 +137,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def export(self):
         if not self.exportWindow.isVisible():
+            self.exportWindow.codedist = self.codedist
             self.exportWindow.show()
 
     def findDominant(self):
