@@ -13,6 +13,8 @@ from GridWindow import GridWindow
 from OutputWindow import OutputWindow
 
 class MainWindow(QtWidgets.QMainWindow):
+    mc = 0.5109989461
+
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.ui = main_design.Ui_MainWindow()
@@ -164,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.plotWeightWindow.isVisible():
             self.plotWeightWindow.mark(p1max, p2max)
             
-        QMessageBox.information(self, 'Dominant energy and pitch angle', 'p = %.2f MeV/c\npitch = %.3f rad' % (pmax, pitchmax))
+        QMessageBox.information(self, 'Dominant energy and pitch angle', 'p = %.2f MeV/c\npitch = %.3f rad' % (pmax*self.mc, pitchmax))
 
     def getCoordinates(self):
         cd = self.codedist
@@ -267,7 +269,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Choose coordinates
         PARAM1, PARAM2, d = self.getCoordinates()
-        F = cd.f
+        F = np.copy(cd.f)
 
         # Plot number of particles instead of just f?
         if self.ui.cbPlotParticles.isChecked():

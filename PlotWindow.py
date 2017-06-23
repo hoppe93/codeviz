@@ -58,6 +58,9 @@ class PlotWindow(QtWidgets.QFrame):
         vmin = cutoff
         vmax = 1
 
+        if len(f[f < vmin*1e-1]) == 0:
+            print('All values set')
+
         if logarithmic:
             f[f < vmin] = vmin*1e-1
             vmin = np.log10(vmin)
@@ -112,3 +115,4 @@ class PlotWindow(QtWidgets.QFrame):
         p1, p2 = np.meshgrid(np.linspace(p1min, p1max, p1n), np.linspace(p2min, p2max, p2n))
         self.ax.plot(p1, p2, 'r.')
         self.drawSafe()
+
