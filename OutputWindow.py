@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 from ui import output_design
 import numpy as np
 import os
-import hdf5storage
+import scipy.io
 
 class OutputWindow(QtWidgets.QDialog):
     def __init__(self):
@@ -78,10 +78,12 @@ class OutputWindow(QtWidgets.QDialog):
                 u'xi': self.codedist.xis,
                 u'p': self.codedist.p,
                 u'punits': 'normalized',
-                u'f': F
+                u'f': F,
+                u'name': 'softviz',
+                u'description': 'softviz'
             }
 
-            hdf5storage.write(matcontent, '.', filename, store_python_metadata=False, matlab_compatible=True)
+            scipy.io.savemat(filename, matcontent)
 
             statinfo = os.stat(filename)
             filesize = statinfo.st_size
@@ -94,37 +96,4 @@ class OutputWindow(QtWidgets.QDialog):
 
             QMessageBox.information(self, 'Writing done', 'Generated a %.2f%s SOFT distribution function' % (filesize, suffices[i]))
             self.close()
-
-        """
-        mc = 9.10938356e-31 * 299792458
-
-        if filename:
-            with open(filename, 'w') as f:
-                # Print bounds
-                f.write('%.12f %.12f %d\n' % (np.amin(r), np.amax(r), len(r)))
-                f.write('%.12f %.12f %d\n' % (np.amin(self.codedist.xis), np.amax(self.codedist.xis), len(self.codedist.xis)))
-                f.write('%.12f %.12f %d\n' % (np.amin(self.codedist.p*mc), np.amax(self.codedist.p*mc), len(self.codedist.p)))
-
-            with open(filename, 'ab') as f:
-                # Print arrays
-                np.savetxt(f, r, newline=" ")
-                np.savetxt(f, self.codedist.xis, newline=" ")
-                np.savetxt(f, self.codedist.p*mc, newline=" ")
-
-                for i in range(0,len(r)):
-                    F = self.codedist.f * r[i]
-                    np.savetxt(f, F)
-
-            statinfo = os.stat(filename)
-            filesize = statinfo.st_size
-            suffices = ['B', 'kB', 'MB', 'GB', 'TB']
-
-            i = 0
-            while filesize > 1000 and i < len(suffices)-1:
-                filesize = filesize / 1000
-                i = i + 1
-
-            QMessageBox.information(self, 'Writing done', 'Generated a %.2f%s SOFT distribution function' % (filesize, suffices[i]))
-            self.close()
-        """
             
