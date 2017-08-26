@@ -30,6 +30,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.exportWindow = OutputWindow()
         self.WF = None
 
+        self.spectrumPresets = [
+            {'name': 'Alcator C-Mod', 'low': 400, 'lowunit': 'nm', 'up': 800, 'upunit': 'nm', 'B': 7.13},
+            {'name': 'ASDEX-U IR', 'low': 3, 'lowunit': 'µm', 'up': 5, 'upunit': 'µm', 'B': 3},
+            {'name': 'DIII-D Visible', 'low': 740, 'lowunit': 'nm', 'up': 760, 'upunit': 'nm', 'B': 2},
+            {'name': 'DIII-D IR', 'low': 3, 'lowunit': 'µm', 'up': 5, 'upunit': 'µm', 'B': 2},
+            {'name': 'REIS', 'low': 400, 'lowunit': 'nm', 'up': 800, 'upunit': 'nm', 'B': 3}
+        ]
+        for item in self.spectrumPresets:
+            self.ui.cbPresets.addItem(item['name'])
+
         gm = [(0, 0, 0), (.15, .15, .5), (.3, .15, .75),
               (.6, .2, .50), (1, .25, .15), (.9, .5, 0),
               (.9, .75, .1), (.9, .9, .5), (1, 1, 1)]
@@ -45,6 +55,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def bindEvents(self):
         self.ui.btnBrowse.clicked.connect(self.browseFile)
+        self.ui.cbVariable.currentTextChanged.connect(self.variableChanged)
         self.ui.btnLoad.clicked.connect(self.loadFunction)
         self.ui.btnComputeW.clicked.connect(self.showWeighting)
         self.ui.btnShowPlot.clicked.connect(self.showPlots)
@@ -55,16 +66,20 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.cbPlotParticles.toggled.connect(self.refreshPlots)
         self.ui.cbLogarithmic.toggled.connect(self.refreshPlots)
         self.ui.tbFunction.textChanged.connect(self.enableLoad)
-        self.ui.rbFullSpectrum.toggled.connect(self.refreshPlots)
-        self.ui.tbLambda1.textChanged.connect(self.refreshPlots)
-        self.ui.tbLambda2.textChanged.connect(self.refreshPlots)
-        self.ui.cbLambda1Unit.currentTextChanged.connect(self.refreshPlots)
-        self.ui.cbLambda2Unit.currentTextChanged.connect(self.refreshPlots)
+        self.ui.cbTime.currentTextChanged.connect(self.enableLoad)
+        #self.ui.rbFullSpectrum.toggled.connect(self.recomputeWeight)
+        #self.ui.tbLambda1.textChanged.connect(self.recomputeWeight)
+        #self.ui.tbLambda2.textChanged.connect(self.recomputeWeight)
+        #self.ui.cbLambda1Unit.currentTextChanged.connect(self.recomputeWeight)
+        #self.ui.cbLambda2Unit.currentTextChanged.connect(self.recomputeWeight)
+        #self.ui.tbMagField.currentTextChanged.connect(self.recomputeWeight)
+        self.ui.btnRecompute.clicked.connect(self.recomputeWeight)
         self.ui.hsThreshold.valueChanged.connect(self.thresholdChanged)
         self.ui.btnOptimize.clicked.connect(self.optimizeGrid)
         self.gridWindow.ui.btnVisualize.clicked.connect(self.visualizeGrid)
         self.ui.btnDominate.clicked.connect(self.findDominant)
         self.ui.btnExport.clicked.connect(self.export)
+        self.ui.cbPresets.currentTextChanged.connect(self.presetChanged)
 
     def browseFile(self):
         filename, _ = QFileDialog.getOpenFileName(parent=self, caption="Open CODE distribution", filter="CODE Distribution (*.mat)")
@@ -82,6 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.exit()
 
     def computeWeighting(self):
+        self.ui.btnRecompute.setEnabled(False)
         cd = self.codedist
 
         PARAM1, PARAM2, d = self.getCoordinates()
@@ -98,6 +114,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         F = np.multiply(F, W)
         F = np.divide(F, np.amax(np.amax(F)))
+
+        self.ui.btnRecompute.setEnabled(True)
 
         return F
 
@@ -200,9 +218,11 @@ class MainWindow(QtWidgets.QMainWindow):
         Nxi = os[0,0]['Nxi'][0][0]
         #times = os[0,0]['times']
 
-        if f.shape[1] > 1:
-            print('Array contains distribution in several timesteps. Picking last timestep.')
+        if self.ui.cbTime.currentText() is 'N/A':
+            print('No time slices, or no "times" variable present. Picking last (or only) timestep.')
             f = f[:,f.shape[1]-1]
+        else:
+            f = f[:,self.ui.cbTime.currentIndex()]
 
         self.codedist = CodeDistribution(f, y, delta, Nxi)
         self.enableOptions()
@@ -244,11 +264,28 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.gridWindow.isVisible():
             self.gridWindow.show()
 
+    def presetChanged(self):
+        prs = {}
+        for item in self.spectrumPresets:
+            if item['name'] == self.ui.cbPresets.currentText():
+                prs = item
+                break
+
+        self.ui.tbLambda1.setText(str(prs['low']))
+        self.ui.tbLambda2.setText(str(prs['up']))
+        self.ui.cbLambda1Unit.setCurrentText(prs['lowunit'])
+        self.ui.cbLambda2Unit.setCurrentText(prs['upunit'])
+        self.ui.tbMagField.setText(str(prs['B']))
+
+    def recomputeWeight(self):
+        self.WF = self.computeWeighting()
+        if self.plotWeightWindow.isVisible():
+            self.showWeighting()
+
     def refreshPlots(self):
         if self.plotDistWindow.isVisible():
             self.showPlots()
         if self.plotWeightWindow.isVisible():
-            self.WF = None
             self.showWeighting()
 
     def setLimitSliders(self):
@@ -282,9 +319,10 @@ class MainWindow(QtWidgets.QMainWindow):
         if not self.plotWeightWindow.isVisible():
             self.plotWeightWindow.show()
 
-        PARAM1, PARAM2, d = self.getCoordinates()
         if self.WF is None:
             self.WF = self.computeWeighting()
+
+        PARAM1, PARAM2, d = self.getCoordinates()
 
         mxpar1, mxpar2 = self.getSliderValues()
         self.plotWeightWindow.plot(PARAM1, PARAM2, self.WF, cutoff=self.threshold, logarithmic=self.ui.cbLogarithmic.isChecked(), xmax=mxpar1, ymax=mxpar2)
@@ -309,6 +347,23 @@ class MainWindow(QtWidgets.QMainWindow):
             self.plotDistWindow.setThreshold(self.threshold)
         if self.plotWeightWindow.isVisible():
             self.plotWeightWindow.setThreshold(self.threshold)
+
+    def variableChanged(self):
+        varname = self.ui.cbVariable.currentText()
+        os = self.matfile[varname]
+        self.ui.cbTime.clear()
+
+        try:
+            times = os[0,0]['times'][0]
+            if len(times) > 1:
+                for t in times:
+                    self.ui.cbTime.addItem('%.3f s' % t)
+                self.ui.cbTime.setEnabled(True)
+            else:
+                self.ui.cbTime.addItem('N/A')
+                self.ui.cbTime.setEnabled(False)
+        except ValueError:
+            print('Distribution contains no time-slices')
 
     def visualizeGrid(self):
         if not self.plotWeightWindow.isVisible(): return
