@@ -50,16 +50,11 @@ class PlotWindow(QtWidgets.QFrame):
             coordinates: 1 = ppar / pperp, 2 = p / pitch
         """
         gerimap = plt.get_cmap('GeriMap')
-        #gerimap = plt.get_cmap('afmhot')
-        fig.clear()
+        fig.clf()
         ax = fig.add_subplot(111)
-        #mx = max(max(f))
 
         vmin = cutoff
         vmax = 1
-
-        if len(f[f < vmin*1e-1]) == 0:
-            print('All values set')
 
         if logarithmic:
             f[f < vmin] = vmin*1e-1
@@ -71,8 +66,6 @@ class PlotWindow(QtWidgets.QFrame):
 
         cp = ax.contourf(X, Y, f, cmap=gerimap, vmin=vmin, vmax=vmax, levels=levels, antialiased=True)
         cbar = fig.colorbar(cp, shrink=0.8)
-        #cbar.ax.tick_params(labelcolor='white', color='white')
-        #ax.tick_params(labelcolor='white', color='white')
 
         ax.set_facecolor('black')
 

@@ -227,6 +227,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.codedist = CodeDistribution(f, y, delta, Nxi)
         self.enableOptions()
         self.setLimitSliders()
+        self.WF = None
 
         self.ui.btnLoad.setEnabled(False)
 
@@ -255,6 +256,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gridWindow.X = PARAM1
         self.gridWindow.Y = PARAM2
         self.gridWindow.normalizedUnits = self.ui.cbNormalizedUnits.isChecked()
+        self.gridWindow.threshold = threshold
 
         if self.ui.rbPPitch.isChecked():
             self.gridWindow.coordinates = 'p'
@@ -347,6 +349,8 @@ class MainWindow(QtWidgets.QMainWindow):
             self.plotDistWindow.setThreshold(self.threshold)
         if self.plotWeightWindow.isVisible():
             self.plotWeightWindow.setThreshold(self.threshold)
+        if self.gridWindow.isVisible():
+            self.gridWindow.setThreshold(self.threshold)
 
     def variableChanged(self):
         varname = self.ui.cbVariable.currentText()

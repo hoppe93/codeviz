@@ -15,6 +15,20 @@ class GridWindow(QtWidgets.QDialog):
         self.Y = None
         self.coordinates = 'p'
         self.normalizedUnits = True
+        self.thresholds = {
+            '50%': 5e-1,
+            '20%': 2e-1,
+            '10%': 1e-1,
+            '5%': 5e-2,
+            '2%': 2e-2,
+            '1%': 1e-2,
+            '0.5%': 5e-3,
+            '0.2%': 2e-3,
+            '0.1%': 1e-3,
+            '0.05%': 5e-4,
+            '0.02%': 2e-4,
+            '0.01%': 1e-4
+        }
 
         self.mc = 0.5109989461
 
@@ -27,7 +41,7 @@ class GridWindow(QtWidgets.QDialog):
         WF = self.f
         PARAM1 = self.X
         PARAM2 = self.Y
-        WF[WF < 1e-2] = 10
+        WF[WF < self.threshold] = 10
 
         if self.normalizedUnits:
             PARAM1 = PARAM1 * self.mc
@@ -74,20 +88,6 @@ class GridWindow(QtWidgets.QDialog):
             self.ui.tbSOFT.setPlainText('pitch=%.2f,%.2f,%d;\np=%.2f,%.2f,%d;' % (param1min, param1max, param1n, param2min, param2max, param2n))
         elif self.coordinates == 'ppar':
             self.ui.tbSOFT.setPlainText('ppar=%.2f,%.2f,%d;\npperp=%.2f,%.2f,%d;' % (param1min, param1max, param1n, param2min, param2max, param2n))
-        """
-        elif self.coordinates == 'ppar':
-            ratio = (param2max-param2min) / (param1max-param1min)
-            param1n = np.floor(np.sqrt(points / ratio))
-            if param1n % 2 == 1:
-                if param1n > 2: param1n = param1n - 1
-                else: param1n = 2
-
-            param2n = np.floor(param1n * ratio)
-            if param2n % 2 == 1:
-                if param2n > 2: param2n = param2n - 1
-                else: param2n = 2
-
-        """
 
         self.ui.lblParam1N.setText('%d' % param1n)
         self.ui.lblParam2N.setText('%d' % param2n)
@@ -101,6 +101,9 @@ class GridWindow(QtWidgets.QDialog):
 
         self.ui.btnVisualize.setEnabled(True)
 
+    def setThreshold(self, threshold):
+        self.threshold = threshold
+
     def showEvent(self, event):
         if self.coordinates == 'p':
             self.ui.lblNameParam1.setText('pitch')
@@ -112,3 +115,4 @@ class GridWindow(QtWidgets.QDialog):
             self.ui.tbSOFT.setPlainText('ppar=0,0,0;\npperp=0,0,0;')
         else:
             raise ValueError('Unrecognized coordinate type: '+self.coordinates)
+
