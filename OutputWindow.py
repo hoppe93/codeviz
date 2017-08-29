@@ -70,7 +70,7 @@ class OutputWindow(QtWidgets.QDialog):
         F = np.zeros((len(r), veldim))
 
         for i in range(0,len(r)):
-            F[i,:] = fvel * r[i]
+            F[i,:] = fvel * profile[i]
 
         if filename:
             matcontent = {
