@@ -256,7 +256,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.gridWindow.X = PARAM1
         self.gridWindow.Y = PARAM2
         self.gridWindow.normalizedUnits = self.ui.cbNormalizedUnits.isChecked()
-        self.gridWindow.threshold = threshold
+        self.gridWindow.threshold = self.threshold
 
         if self.ui.rbPPitch.isChecked():
             self.gridWindow.coordinates = 'p'
