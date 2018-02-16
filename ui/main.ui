@@ -395,6 +395,11 @@
        <string>m</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>mc^2</string>
+      </property>
+     </item>
     </widget>
     <widget class="QLabel" name="label_5">
      <property name="geometry">
@@ -461,6 +466,11 @@
        <string>m</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>mc^2</string>
+      </property>
+     </item>
     </widget>
     <widget class="QLineEdit" name="tbLambda1">
      <property name="geometry">
@@ -486,7 +496,7 @@
       <rect>
        <x>20</x>
        <y>100</y>
-       <width>191</width>
+       <width>201</width>
        <height>26</height>
       </rect>
      </property>
@@ -497,7 +507,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Full spectrum weighting</string>
+      <string>Full synchrotron weighting</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -519,7 +529,7 @@
       </font>
      </property>
      <property name="text">
-      <string>pperp weighting</string>
+      <string>pperp-squared weighting</string>
      </property>
     </widget>
     <widget class="QPushButton" name="btnComputeW">
@@ -650,6 +660,25 @@
        <weight>50</weight>
        <bold>false</bold>
       </font>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="rbBremsstrahlung">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>100</y>
+       <width>201</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Bremsstrahlung weighting</string>
      </property>
     </widget>
    </widget>

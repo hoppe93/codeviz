@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.special as sp
 from Bekefi import Spectrum
+from Bremsstrahlung import DSigmaDk
 
 class CodeDistribution:
     
@@ -31,6 +32,9 @@ class CodeDistribution:
         self.maxtheta = np.amax(np.amax(self.THETA))
         self.maxppar = np.amax(np.amax(self.PPAR))
         self.maxpperp = np.amax(np.amax(self.PPERP))
+
+    def getBremsstrahlungWeighting(self, k):
+        return DSigmaDk(self.P, self.XI, k)
 
     def getFullWeighting(self, lambda1, lambda2, magneticField):
         return Spectrum(self.P, self.XI, lambda1, lambda2, magneticField)

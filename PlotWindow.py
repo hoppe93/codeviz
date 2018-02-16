@@ -44,7 +44,7 @@ class PlotWindow(QtWidgets.QFrame):
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
 
-    def genPlot(self, fig, X, Y, f, logarithmic=False, cutoff=1e-2,xmax=None,ymax=None):
+    def genPlot(self, fig, X, Y, f, logarithmic=False, cutoff=1e-2, xmax=None, ymax=None, coordinates=1):
         """ Generate a contour plot of a CODE distribution function
             f: CodeDistribution function
             coordinates: 1 = ppar / pperp, 2 = p / pitch
@@ -69,6 +69,13 @@ class PlotWindow(QtWidgets.QFrame):
 
         ax.set_facecolor('black')
 
+        if coordinates == 1:
+            ax.set_xlabel('$\\theta_{\\mathrm{p}}$ (rad)')
+            ax.set_ylabel('$p$ (mc)')
+        elif coordinates == 2:
+            ax.set_xlabel('$p_\parallel$ ($mc$)')
+            ax.set_ylabel('$p_\perp$ ($mc$)')
+
         if xmax != None:
             ax.set_xlim([0,xmax])
         if ymax != None:
@@ -80,7 +87,7 @@ class PlotWindow(QtWidgets.QFrame):
         self.ax.plot(x, y, 'rx')
         self.drawSafe()
 
-    def plot(self, X, Y, f, logarithmic=False, cutoff=1e-2, xmax=None, ymax=None):
+    def plot(self, X, Y, f, logarithmic=False, cutoff=1e-2, xmax=None, ymax=None, coordinates=1):
         self.f = f
         self.X = X
         self.Y = Y
@@ -88,7 +95,7 @@ class PlotWindow(QtWidgets.QFrame):
         self.xmax = xmax
         self.ymax = ymax
 
-        self.ax, self.cp, self.cbar = self.genPlot(self.figure, X, Y, f, logarithmic, cutoff, xmax, ymax)
+        self.ax, self.cp, self.cbar = self.genPlot(self.figure, X, Y, f, logarithmic, cutoff, xmax, ymax, coordinates=coordinates)
 
         self.drawSafe()
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/main.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.10
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -136,6 +136,7 @@ class Ui_MainWindow(object):
         self.cbLambda2Unit.addItem("")
         self.cbLambda2Unit.addItem("")
         self.cbLambda2Unit.addItem("")
+        self.cbLambda2Unit.addItem("")
         self.label_5 = QtWidgets.QLabel(self.gbSWeighting)
         self.label_5.setGeometry(QtCore.QRect(140, 70, 21, 28))
         font = QtGui.QFont()
@@ -155,6 +156,7 @@ class Ui_MainWindow(object):
         self.cbLambda1Unit.addItem("")
         self.cbLambda1Unit.addItem("")
         self.cbLambda1Unit.addItem("")
+        self.cbLambda1Unit.addItem("")
         self.tbLambda1 = QtWidgets.QLineEdit(self.gbSWeighting)
         self.tbLambda1.setGeometry(QtCore.QRect(20, 70, 51, 28))
         font = QtGui.QFont()
@@ -163,7 +165,7 @@ class Ui_MainWindow(object):
         self.tbLambda1.setFont(font)
         self.tbLambda1.setObjectName("tbLambda1")
         self.rbFullSpectrum = QtWidgets.QRadioButton(self.gbSWeighting)
-        self.rbFullSpectrum.setGeometry(QtCore.QRect(20, 100, 191, 26))
+        self.rbFullSpectrum.setGeometry(QtCore.QRect(20, 100, 201, 26))
         font = QtGui.QFont()
         font.setBold(False)
         font.setWeight(50)
@@ -226,6 +228,13 @@ class Ui_MainWindow(object):
         font.setWeight(50)
         self.cbPresets.setFont(font)
         self.cbPresets.setObjectName("cbPresets")
+        self.rbBremsstrahlung = QtWidgets.QRadioButton(self.gbSWeighting)
+        self.rbBremsstrahlung.setGeometry(QtCore.QRect(240, 100, 201, 26))
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setWeight(50)
+        self.rbBremsstrahlung.setFont(font)
+        self.rbBremsstrahlung.setObjectName("rbBremsstrahlung")
         self.btnExport = QtWidgets.QPushButton(self.centralwidget)
         self.btnExport.setEnabled(False)
         self.btnExport.setGeometry(QtCore.QRect(10, 610, 84, 28))
@@ -331,6 +340,7 @@ class Ui_MainWindow(object):
         self.cbLambda2Unit.setItemText(2, _translate("MainWindow", "µm"))
         self.cbLambda2Unit.setItemText(3, _translate("MainWindow", "mm"))
         self.cbLambda2Unit.setItemText(4, _translate("MainWindow", "m"))
+        self.cbLambda2Unit.setItemText(5, _translate("MainWindow", "mc^2"))
         self.label_5.setText(_translate("MainWindow", "to"))
         self.cbLambda1Unit.setCurrentText(_translate("MainWindow", "nm"))
         self.cbLambda1Unit.setItemText(0, _translate("MainWindow", "pm"))
@@ -338,15 +348,17 @@ class Ui_MainWindow(object):
         self.cbLambda1Unit.setItemText(2, _translate("MainWindow", "µm"))
         self.cbLambda1Unit.setItemText(3, _translate("MainWindow", "mm"))
         self.cbLambda1Unit.setItemText(4, _translate("MainWindow", "m"))
+        self.cbLambda1Unit.setItemText(5, _translate("MainWindow", "mc^2"))
         self.tbLambda1.setText(_translate("MainWindow", "400"))
-        self.rbFullSpectrum.setText(_translate("MainWindow", "Full spectrum weighting"))
-        self.rbPperpVisible.setText(_translate("MainWindow", "pperp weighting"))
+        self.rbFullSpectrum.setText(_translate("MainWindow", "Full synchrotron weighting"))
+        self.rbPperpVisible.setText(_translate("MainWindow", "pperp-squared weighting"))
         self.btnComputeW.setText(_translate("MainWindow", "Show"))
         self.label_3.setText(_translate("MainWindow", "Magnetic field:"))
         self.tbMagField.setText(_translate("MainWindow", "5"))
         self.label_4.setText(_translate("MainWindow", "T"))
         self.btnDominate.setText(_translate("MainWindow", "Find dominant"))
         self.btnRecompute.setText(_translate("MainWindow", "Compute"))
+        self.rbBremsstrahlung.setText(_translate("MainWindow", "Bremsstrahlung weighting"))
         self.btnExport.setText(_translate("MainWindow", "Export..."))
         self.cbNormalizedUnits.setText(_translate("MainWindow", "Normalized units"))
         self.cbLogarithmic.setText(_translate("MainWindow", "Logarithmic plot"))

@@ -33,9 +33,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.spectrumPresets = [
             {'name': 'Alcator C-Mod', 'low': 400, 'lowunit': 'nm', 'up': 800, 'upunit': 'nm', 'B': 7.13},
             {'name': 'ASDEX-U IR', 'low': 3, 'lowunit': 'µm', 'up': 5, 'upunit': 'µm', 'B': 3},
-            {'name': 'DIII-D Visible', 'low': 740, 'lowunit': 'nm', 'up': 760, 'upunit': 'nm', 'B': 2},
+            {'name': 'DIII-D Visible', 'low': 880, 'lowunit': 'nm', 'up': 900, 'upunit': 'nm', 'B': 2.4},
             {'name': 'DIII-D IR', 'low': 3, 'lowunit': 'µm', 'up': 5, 'upunit': 'µm', 'B': 2},
-            {'name': 'REIS', 'low': 400, 'lowunit': 'nm', 'up': 800, 'upunit': 'nm', 'B': 3}
+            {'name': 'REIS', 'low': 400, 'lowunit': 'nm', 'up': 800, 'upunit': 'nm', 'B': 3},
+            {'name': 'Bremsstrahlung', 'low': 1, 'lowunit': 'mc^2', 'up': 1, 'upunit': 'mc^2', 'B': 1}
         ]
         for item in self.spectrumPresets:
             self.ui.cbPresets.addItem(item['name'])
@@ -109,8 +110,18 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda2 = float(self.ui.tbLambda2.text()) * self.wavelengthStringToFloat(self.ui.cbLambda2Unit.currentText())
 
             W = cd.getFullWeighting(lambda1, lambda2, float(self.ui.tbMagField.text()))
-        else:
+        elif self.ui.rbBremsstrahlung.isChecked():
+            if self.ui.cbLambda1Unit.currentText() != "mc^2":
+                QMessageBox.critical(self, 'Invalid spectrum unit', 'The bremsstrahlung spectrum only permits the use of mc^2 units')
+                return None
+
+            k = float(self.ui.tbLambda1.text())
+            W = cd.getBremsstrahlungWeighting(k)
+        elif self.ui.rbPperpVisible.isChecked():
             W = cd.PPERP**2
+        else:
+            QMessageBox.critical(self, 'Invalid radiation choice', 'Invalid choice for radiation type to weigh with')
+            return None
 
         F = np.multiply(F, W)
         F = np.divide(F, np.amax(np.amax(F)))
@@ -193,6 +204,10 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             return cd.PPAR, cd.PPERP, np.multiply(cd.f, cd.PPERP)
 
+    def getCoordinateIndex(self):
+        if self.ui.rbPPitch.isChecked(): return 1
+        else: return 2
+
     def getSliderValues(self):
         perc1 = self.ui.hsParam1.value() * .01
         perc2 = self.ui.hsParam2.value() * .01
@@ -245,8 +260,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 lambda2 = float(self.ui.tbLambda2.text()) * self.wavelengthStringToFloat(self.ui.cbLambda2Unit.currentText())
 
                 W = cd.getFullWeighting(lambda1, lambda2, float(self.ui.tbMagField.text()))
-            else:
+            elif self.ui.rbBremsstrahlung.isChecked():
+                if self.ui.cbLambda1Unit.currentText() is not "mc^2":
+                    QMessageBox.critical(self, 'Invalid spectrum unit', 'The bremsstrahlung spectrum only permits the use of mc^2 units')
+                    return None
+
+                k = float(self.ui.tbLambda1.text())
+                W = cd.getBremsstrahlungWeighting(k)
+            elif self.ui.rbPperpVisible.isChecked():
                 W = cd.PPERP**2
+            else:
+                QMessageBox.critical(self, 'Invalid radiation choice', 'Invalid choice for radiation type to weigh with')
+                return None
 
             WF = np.multiply(WF, W)
             WF = np.divide(WF, np.amax(np.amax(WF)))
@@ -315,7 +340,7 @@ class MainWindow(QtWidgets.QMainWindow):
             F = np.multiply(F, d)
 
         mxpar1, mxpar2 = self.getSliderValues()
-        self.plotDistWindow.plot(PARAM1, PARAM2, F, cutoff=self.threshold, logarithmic=self.ui.cbLogarithmic.isChecked(), xmax=mxpar1, ymax=mxpar2)
+        self.plotDistWindow.plot(PARAM1, PARAM2, F, cutoff=self.threshold, logarithmic=self.ui.cbLogarithmic.isChecked(), xmax=mxpar1, ymax=mxpar2, coordinates=self.getCoordinateIndex())
 
     def showWeighting(self):
         if not self.plotWeightWindow.isVisible():
@@ -327,7 +352,7 @@ class MainWindow(QtWidgets.QMainWindow):
         PARAM1, PARAM2, d = self.getCoordinates()
 
         mxpar1, mxpar2 = self.getSliderValues()
-        self.plotWeightWindow.plot(PARAM1, PARAM2, self.WF, cutoff=self.threshold, logarithmic=self.ui.cbLogarithmic.isChecked(), xmax=mxpar1, ymax=mxpar2)
+        self.plotWeightWindow.plot(PARAM1, PARAM2, self.WF, cutoff=self.threshold, logarithmic=self.ui.cbLogarithmic.isChecked(), xmax=mxpar1, ymax=mxpar2, coordinates=self.getCoordinateIndex())
 
     def sliderChanged(self):
         mxpar1, mxpar2 = self.getSliderValues()

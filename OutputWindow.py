@@ -29,7 +29,7 @@ class OutputWindow(QtWidgets.QDialog):
             self.ui.tbRadialFile.setText(filename)
 
             # Load radial profile
-            DATA = np.genfromtxt(filename, delimiter='')
+            DATA = np.genfromtxt(filename, delimiter=',')
             self.r = DATA[:,0]
             self.profile = DATA[:,1]
 
