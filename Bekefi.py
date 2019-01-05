@@ -13,6 +13,7 @@ def Spectrum(P, XI, lambda0, lambda1, magneticField):
 
     lBLookUp, intLookUp = GetLookupTable()
     lambdas = np.linspace(lambda0, lambda1, 100)
+    dlambda = np.abs(lambdas[1]-lambdas[0])
 
     lowerBound = 4*np.pi/3 * c*m*np.divide(gmmpar, e*B*gmm**2)
     pf = 1/np.sqrt(3) * c*e**2 * np.divide(1, eps0*gmm**2)
@@ -23,7 +24,7 @@ def Spectrum(P, XI, lambda0, lambda1, magneticField):
         prefactor = pf / lambdas[i]**3
         s = s + prefactor * intK53
 
-    return s
+    return s * dlambda
 
 def GetLookupTable():
     lBLookup = np.array([
